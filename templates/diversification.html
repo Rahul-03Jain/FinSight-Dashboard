@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block page_title %}Portfolio Diversification{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Diversification Score</span>
+                <span class="badge text-bg-{{ snapshot.color }}">{{ snapshot.category }}</span>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-end justify-content-between gap-3 mb-3">
+                    <div>
+                        <div class="display-6 mb-0 text-{{ snapshot.color }} fw-bold">{{ snapshot.score }}/100</div>
+                        <div class="text-secondary">Score is based on concentration + sector distribution</div>
+                    </div>
+                </div>
+
+                <div class="progress" role="progressbar" aria-label="Diversification score meter" aria-valuenow="{{ snapshot.score }}" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar bg-{{ snapshot.color }}" style="width: {{ snapshot.score }}%"></div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="p-3 rounded-3 bg-light" style="background: rgba(148,163,184,0.12)!important;">
+                                <div class="text-secondary">Total Stocks</div>
+                                <div class="fw-bold fs-4 mb-0">{{ snapshot.stock_count }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3 bg-light" style="background: rgba(148,163,184,0.12)!important;">
+                                <div class="text-secondary">Total Sectors</div>
+                                <div class="fw-bold fs-4 mb-0">{{ snapshot.sector_count }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3 bg-light" style="background: rgba(148,163,184,0.12)!important;">
+                                <div class="text-secondary">Largest Stock %</div>
+                                <div class="fw-bold fs-4 mb-0">{{ "%.2f"|format(snapshot.largest_stock_allocation_pct) }}%</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3 bg-light" style="background: rgba(148,163,184,0.12)!important;">
+                                <div class="text-secondary">Largest Sector %</div>
+                                <div class="fw-bold fs-4 mb-0">{{ "%.2f"|format(snapshot.largest_sector_concentration_pct) }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <div class="text-secondary">Portfolio insight</div>
+                <div class="fw-semibold">
+                    {% if snapshot.score >= 80 %}
+                        Strong diversification; consider fine-tuning allocations.
+                    {% elif snapshot.score >= 60 %}
+                        Good diversification; watch for any dominant holdings.
+                    {% elif snapshot.score >= 40 %}
+                        Moderate diversification; some concentration risk is present.
+                    {% else %}
+                        Poor diversification; spreads may be too concentrated.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header">Dynamic Insights</div>
+            <div class="card-body">
+                {% if snapshot.insights %}
+                    {% for insight in snapshot.insights %}
+                        <div class="alert alert-light border mb-2" role="alert" style="background: rgba(148,163,184,0.10)!important;">
+                            {{ insight }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-secondary">Add portfolio holdings to generate diversification insights.</div>
+                {% endif %}
+
+                <div class="mt-4 text-secondary small">
+                    Allocation charts below use live prices from <span class="fw-semibold">yfinance</span> (with safe fallback on API failures).
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">Sector Allocation (Pie)</div>
+            <div class="card-body">
+                <canvas id="diversificationSectorPie"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">Stock Allocation (Doughnut)</div>
+            <div class="card-body">
+                <canvas id="diversificationStockDoughnut"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    window.finsightDiversification = {{ snapshot | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/diversification.js') }}"></script>
+{% endblock %}
+
