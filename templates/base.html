@@ -21,6 +21,7 @@
                 <a class="nav-link {% if request.path == '/analytics' %}active{% endif %}" href="{{ url_for('analytics.analytics') }}">Analytics</a>
                 <a class="nav-link {% if request.path == '/diversification' %}active{% endif %}" href="{{ url_for('analytics.diversification') }}">Diversification</a>
                 <a class="nav-link {% if request.path == '/simulator' %}active{% endif %}" href="{{ url_for('analytics.simulator') }}">What-If Simulator</a>
+                <a class="nav-link {% if request.path == '/stress-test' %}active{% endif %}" href="{{ url_for('analytics.stress_test') }}">Stress Testing</a>
                 <a class="nav-link {% if request.path == '/goals' %}active{% endif %}" href="{{ url_for('dashboard.goals') }}">Goals</a>
                 <a class="nav-link {% if request.path == '/transactions' %}active{% endif %}" href="{{ url_for('transactions.transactions') }}">Transactions</a>
             </nav>

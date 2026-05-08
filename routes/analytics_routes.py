@@ -9,6 +9,7 @@ from services.simulator_service import (
     run_investment_simulation,
     validate_simulation_input,
 )
+from services.stress_test_service import run_stress_test, validate_crash_percent
 from utils.helpers import safe_float, safe_int
 
 analytics_bp = Blueprint("analytics", __name__)
@@ -69,4 +70,35 @@ def simulator():
         errors=errors,
         simulation_result=result,
         insights=insights,
+    )
+
+
+@analytics_bp.route("/stress-test", methods=["GET", "POST"])
+def stress_test():
+    user = User.query.first()
+    crash_percent = 20.0
+    errors: list[str] = []
+
+    if request.method == "POST":
+        crash_percent = safe_float(request.form.get("crash_percent"), 20.0)
+
+    crash_percent, validation_errors = validate_crash_percent(crash_percent)
+    errors.extend(validation_errors)
+
+    snapshot = run_stress_test(user.id, crash_percent)
+
+    scenarios = [
+        {"label": "Mild Correction", "value": 10},
+        {"label": "Bear Market", "value": 20},
+        {"label": "Severe Crash", "value": 35},
+        {"label": "Extreme Crash", "value": 50},
+    ]
+
+    return render_template(
+        "stress_test.html",
+        user=user,
+        crash_percent=crash_percent,
+        scenarios=scenarios,
+        errors=errors,
+        snapshot=snapshot,
     )
