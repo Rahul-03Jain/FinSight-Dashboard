@@ -26,6 +26,7 @@
                 <a class="nav-link {% if request.path == '/transactions' %}active{% endif %}" href="{{ url_for('transactions.transactions') }}">Transactions</a>
             </nav>
             <hr>
+            <a class="btn btn-outline-light w-100 mb-2" href="{{ url_for('auth.logout') }}">Logout</a>
             <button id="themeToggle" class="btn btn-outline-light w-100">Toggle Dark Mode</button>
         </aside>
         <main class="content p-4 p-lg-5">
@@ -33,9 +34,17 @@
                 <div>
                     <h2 class="mb-0">{% block page_title %}Dashboard{% endblock %}</h2>
                     <small class="text-secondary">Welcome back, {{ user.name }}</small>
+                    <span class="badge text-bg-info ms-2">{{ user.investor_type }}</span>
                 </div>
                 <div class="badge text-bg-primary p-2">Live Financial Intelligence</div>
             </header>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} py-2">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             {% block content %}{% endblock %}
         </main>
     </div>

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 
-from models.user_model import User
 from services.analytics_service import build_portfolio_snapshot
+from services.auth_service import get_current_user, login_required
 from services.diversification_service import build_diversification_snapshot
 from services.simulator_service import (
     SimulationInput,
@@ -16,22 +16,25 @@ analytics_bp = Blueprint("analytics", __name__)
 
 
 @analytics_bp.route("/analytics")
+@login_required
 def analytics():
-    user = User.query.first()
+    user = get_current_user()
     snapshot = build_portfolio_snapshot(user.id)
     return render_template("analytics.html", user=user, snapshot=snapshot)
 
 
 @analytics_bp.route("/diversification")
+@login_required
 def diversification():
-    user = User.query.first()
+    user = get_current_user()
     snapshot = build_diversification_snapshot(user.id)
     return render_template("diversification.html", user=user, snapshot=snapshot)
 
 
 @analytics_bp.route("/simulator", methods=["GET", "POST"])
+@login_required
 def simulator():
-    user = User.query.first()
+    user = get_current_user()
 
     form_data = {
         "initial_investment": 100000.0,
@@ -74,8 +77,9 @@ def simulator():
 
 
 @analytics_bp.route("/stress-test", methods=["GET", "POST"])
+@login_required
 def stress_test():
-    user = User.query.first()
+    user = get_current_user()
     crash_percent = 20.0
     errors: list[str] = []
 

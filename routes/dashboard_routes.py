@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 
 from models.portfolio_model import Goal
-from models.user_model import User
+from services.auth_service import get_current_user, login_required
 from services.analytics_service import build_portfolio_snapshot
 
 dashboard_bp = Blueprint("dashboard", __name__)
@@ -9,22 +9,25 @@ dashboard_bp = Blueprint("dashboard", __name__)
 
 @dashboard_bp.route("/")
 @dashboard_bp.route("/dashboard")
+@login_required
 def dashboard():
-    user = User.query.first()
+    user = get_current_user()
     snapshot = build_portfolio_snapshot(user.id)
     return render_template("dashboard.html", user=user, snapshot=snapshot)
 
 
 @dashboard_bp.route("/portfolio")
+@login_required
 def portfolio():
-    user = User.query.first()
+    user = get_current_user()
     snapshot = build_portfolio_snapshot(user.id)
     return render_template("portfolio.html", user=user, snapshot=snapshot)
 
 
 @dashboard_bp.route("/goals", methods=["GET", "POST"])
+@login_required
 def goals():
-    user = User.query.first()
+    user = get_current_user()
     if request.method == "POST":
         from datetime import datetime
 

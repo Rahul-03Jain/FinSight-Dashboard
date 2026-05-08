@@ -3,16 +3,17 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from models.database import db
 from models.portfolio_model import Portfolio
 from models.transaction_model import Transaction
-from models.user_model import User
 from services.analytics_service import build_portfolio_snapshot
+from services.auth_service import get_current_user, login_required
 from utils.helpers import safe_float
 
 transaction_bp = Blueprint("transactions", __name__)
 
 
 @transaction_bp.route("/transactions", methods=["GET", "POST"])
+@login_required
 def transactions():
-    user = User.query.first()
+    user = get_current_user()
     error_message = ""
 
     if request.method == "POST":

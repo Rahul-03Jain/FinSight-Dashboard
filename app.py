@@ -2,6 +2,7 @@ from flask import Flask
 
 from models.database import init_database, db
 from routes.analytics_routes import analytics_bp
+from routes.auth_routes import auth_bp
 from routes.dashboard_routes import dashboard_bp
 from routes.transaction_routes import transaction_bp
 
@@ -14,6 +15,7 @@ def create_app() -> Flask:
 
     db.init_app(app)
 
+    app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(analytics_bp)
     app.register_blueprint(transaction_bp)

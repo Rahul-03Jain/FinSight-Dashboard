@@ -164,6 +164,41 @@ h1, h2, h3, h4, h5, h6, p, label, span, small, th, td, li {
     padding-bottom: 10px;
 }
 
+.login-page {
+    background: linear-gradient(140deg, #0f172a, #1d4ed8 55%, #0ea5e9);
+}
+
+.login-shell {
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 20px 45px rgba(2, 6, 23, 0.45);
+    background: #ffffff;
+}
+
+.login-brand-panel {
+    background: linear-gradient(160deg, #0f172a, #1e293b);
+    color: #e2e8f0;
+}
+
+.login-highlight-card {
+    background: rgba(148, 163, 184, 0.2);
+    border: 1px solid rgba(203, 213, 225, 0.3);
+}
+
+.login-highlight-card ul {
+    padding-left: 1rem;
+}
+
+.login-page .form-label {
+    color: #334155;
+    font-weight: 600;
+}
+
+.login-page .form-control {
+    background: #f8fafc;
+    color: #0f172a;
+}
+
 @media (max-width: 992px) {
     .app-shell {
         flex-direction: column;
