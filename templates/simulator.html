@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block page_title %}What-If Investment Simulator{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">Simulation Inputs</div>
+            <div class="card-body">
+                {% if errors %}
+                    <div class="alert alert-danger py-2">
+                        <ul class="mb-0 ps-3">
+                            {% for error in errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <form method="post" class="d-grid gap-3">
+                    <div>
+                        <label class="form-label">Initial Investment (USD)</label>
+                        <input type="number" min="0" step="0.01" class="form-control" name="initial_investment" value="{{ form_data.initial_investment }}" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Monthly Investment (USD)</label>
+                        <input type="number" min="0" step="0.01" class="form-control" name="monthly_investment" value="{{ form_data.monthly_investment }}" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Expected Annual Return (%)</label>
+                        <input type="number" min="0" max="50" step="0.01" class="form-control" name="annual_return_rate" value="{{ form_data.annual_return_rate }}" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Duration (Years)</label>
+                        <input type="number" min="1" max="50" step="1" class="form-control" name="duration_years" value="{{ form_data.duration_years }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Run Simulation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="row g-3">
+            <div class="col-md-6 col-xl-3">
+                <div class="card metric-card h-100">
+                    <div class="card-body">
+                        <p class="text-secondary mb-1">Estimated Future Value</p>
+                        <h5 class="mb-0">${{ "%.2f"|format(simulation_result.summary.future_value if simulation_result else 0) }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card metric-card h-100">
+                    <div class="card-body">
+                        <p class="text-secondary mb-1">Total Invested</p>
+                        <h5 class="mb-0">${{ "%.2f"|format(simulation_result.summary.total_invested if simulation_result else 0) }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card metric-card h-100">
+                    <div class="card-body">
+                        <p class="text-secondary mb-1">Estimated Growth</p>
+                        {% set profit = simulation_result.summary.profit if simulation_result else 0 %}
+                        <h5 class="mb-0 {% if profit >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            ${{ "%.2f"|format(profit) }}
+                        </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card metric-card h-100">
+                    <div class="card-body">
+                        <p class="text-secondary mb-1">Estimated ROI</p>
+                        {% set roi = simulation_result.summary.roi_pct if simulation_result else 0 %}
+                        <h5 class="mb-0 {% if roi >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            {{ "%.2f"|format(roi) }}%
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">Growth Insights</div>
+            <div class="card-body">
+                {% if insights %}
+                    {% for insight in insights %}
+                        <div class="alert alert-light border mb-2 simulator-insight">
+                            {{ insight }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-secondary">Run a simulation to view personalized forecasting insights.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header">Portfolio Growth Forecast</div>
+            <div class="card-body">
+                <canvas id="simGrowthChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">Invested vs Profit</div>
+            <div class="card-body">
+                <canvas id="simComparisonChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+window.finsightSimulation = {{ simulation_result | tojson if simulation_result else "null" }};
+</script>
+<script src="{{ url_for('static', filename='js/simulator.js') }}"></script>
+{% endblock %}
