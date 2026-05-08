@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block page_title %}Transactions{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Add Transaction</div>
+            <div class="card-body">
+                {% if error_message %}
+                    <div class="alert alert-danger">{{ error_message }}</div>
+                {% endif %}
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Stock Symbol</label>
+                        <input type="text" name="stock_symbol" class="form-control" placeholder="AAPL" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Company Name</label>
+                        <input type="text" name="company_name" class="form-control" placeholder="Apple Inc.">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Sector</label>
+                        <input type="text" name="sector" class="form-control" placeholder="Technology">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select name="transaction_type" class="form-select">
+                            <option value="BUY">Buy</option>
+                            <option value="SELL">Sell</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" step="0.01" min="0.01" name="quantity" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Price</label>
+                        <input type="number" step="0.01" min="0.01" name="price" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Transaction</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">History & Filters</div>
+            <div class="card-body">
+                <form class="row g-2 mb-3" method="get">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="symbol" value="{{ symbol_filter }}" placeholder="Filter by symbol">
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select" name="tx_type">
+                            <option value="">All Types</option>
+                            <option value="BUY" {% if tx_type_filter == 'BUY' %}selected{% endif %}>Buy</option>
+                            <option value="SELL" {% if tx_type_filter == 'SELL' %}selected{% endif %}>Sell</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-grid">
+                        <button class="btn btn-outline-primary">Apply Filters</button>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Symbol</th>
+                                <th>Type</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                            <tr>
+                                <td>{{ tx.id }}</td>
+                                <td>{{ tx.stock_symbol }}</td>
+                                <td><span class="badge {% if tx.transaction_type == 'BUY' %}text-bg-success{% else %}text-bg-danger{% endif %}">{{ tx.transaction_type }}</span></td>
+                                <td>{{ tx.quantity }}</td>
+                                <td>${{ "%.2f"|format(tx.price) }}</td>
+                                <td>${{ "%.2f"|format(tx.total) }}</td>
+                                <td>{{ tx.timestamp.strftime("%Y-%m-%d %H:%M") }}</td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="7" class="text-center text-secondary">No transactions found.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

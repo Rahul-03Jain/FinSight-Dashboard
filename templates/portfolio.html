@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block page_title %}Portfolio Holdings{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <span>Current Holdings</span>
+        <span class="badge text-bg-dark">{{ snapshot.summary.stock_count }} Stocks</span>
+    </div>
+    <div class="card-body table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Company</th>
+                    <th>Sector</th>
+                    <th>Shares</th>
+                    <th>Avg Buy</th>
+                    <th>Current</th>
+                    <th>Invested</th>
+                    <th>Value</th>
+                    <th>P/L %</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for position in snapshot.positions %}
+                <tr>
+                    <td>{{ position.symbol }}</td>
+                    <td>{{ position.company_name }}</td>
+                    <td>{{ position.sector }}</td>
+                    <td>{{ position.shares }}</td>
+                    <td>${{ "%.2f"|format(position.average_buy_price) }}</td>
+                    <td>${{ "%.2f"|format(position.current_price) }}</td>
+                    <td>${{ "%.2f"|format(position.invested) }}</td>
+                    <td>${{ "%.2f"|format(position.current_value) }}</td>
+                    <td class="{% if position.profit_loss_pct >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {{ "%.2f"|format(position.profit_loss_pct) }}%
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

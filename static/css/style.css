@@ -1,0 +1,104 @@
+:root {
+    --bg-main: #f6f8fb;
+    --bg-card: #ffffff;
+    --text-main: #1f2937;
+    --text-soft: #6b7280;
+    --sidebar-bg: #0f172a;
+    --sidebar-text: #e2e8f0;
+}
+
+[data-theme="dark"] {
+    --bg-main: #0b1220;
+    --bg-card: #111827;
+    --text-main: #e5e7eb;
+    --text-soft: #9ca3af;
+    --sidebar-bg: #020617;
+    --sidebar-text: #cbd5e1;
+}
+
+body {
+    background: var(--bg-main);
+    color: var(--text-main);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 260px;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+.sidebar .nav-link {
+    color: #cbd5e1;
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+    background: #334155;
+    color: #fff;
+}
+
+.content {
+    flex: 1;
+}
+
+.card {
+    border: none;
+    border-radius: 14px;
+    background: var(--bg-card);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.card-header {
+    background: transparent;
+    color: var(--text-main);
+    font-weight: 600;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.metric-card h4 {
+    font-weight: 700;
+}
+
+.text-secondary {
+    color: var(--text-soft) !important;
+}
+
+.table,
+.form-control,
+.form-select {
+    color: var(--text-main);
+}
+
+.form-control,
+.form-select,
+.table {
+    background: var(--bg-card);
+}
+
+.goal-block {
+    border-bottom: 1px dashed rgba(148, 163, 184, 0.4);
+    padding-bottom: 10px;
+}
+
+@media (max-width: 992px) {
+    .app-shell {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+}

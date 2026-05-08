@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block page_title %}Investment Goals{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">Add Goal</div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Goal Name</label>
+                        <input type="text" name="goal_name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Target Amount</label>
+                        <input type="number" step="0.01" min="1" name="target_amount" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Current Amount</label>
+                        <input type="number" step="0.01" min="0" name="current_amount" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Deadline</label>
+                        <input type="date" name="deadline" class="form-control">
+                    </div>
+                    <button class="btn btn-primary w-100" type="submit">Save Goal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">Goal Progress</div>
+            <div class="card-body">
+                {% for goal in goals %}
+                {% set progress = (goal.current_amount / goal.target_amount * 100) if goal.target_amount > 0 else 0 %}
+                {% set remaining = goal.target_amount - goal.current_amount %}
+                <div class="goal-block mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">{{ goal.goal_name }}</h6>
+                        <span class="badge text-bg-info">{{ "%.2f"|format(progress) }}%</span>
+                    </div>
+                    <small class="text-secondary d-block mb-2">
+                        Target: ${{ "%.2f"|format(goal.target_amount) }} |
+                        Current: ${{ "%.2f"|format(goal.current_amount) }} |
+                        Remaining: ${{ "%.2f"|format(remaining) }}
+                    </small>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: {{ progress if progress <= 100 else 100 }}%"></div>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-secondary mb-0">No goals found. Add your first goal to track progress.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

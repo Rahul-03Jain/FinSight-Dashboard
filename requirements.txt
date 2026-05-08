@@ -1,0 +1,8 @@
+Flask
+Flask-SQLAlchemy
+pandas
+numpy
+matplotlib
+plotly
+yfinance
+SQLAlchemy

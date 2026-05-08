@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block page_title %}Stock Analytics{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    {% for position in snapshot.positions %}
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <span>{{ position.symbol }} - {{ position.company_name }}</span>
+                <span class="badge text-bg-secondary">{{ position.data_source }}</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-6"><small class="text-secondary">Current Price</small><p class="mb-0 fw-semibold">${{ "%.2f"|format(position.current_price) }}</p></div>
+                    <div class="col-6"><small class="text-secondary">Average Buy Price</small><p class="mb-0 fw-semibold">${{ "%.2f"|format(position.average_buy_price) }}</p></div>
+                    <div class="col-6 mt-2"><small class="text-secondary">Total Shares</small><p class="mb-0 fw-semibold">{{ position.shares }}</p></div>
+                    <div class="col-6 mt-2"><small class="text-secondary">Profit / Loss %</small><p class="mb-0 fw-semibold {% if position.profit_loss_pct >= 0 %}text-success{% else %}text-danger{% endif %}">{{ "%.2f"|format(position.profit_loss_pct) }}%</p></div>
+                </div>
+                <canvas class="mini-trend-chart" id="trend-{{ position.symbol }}"></canvas>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+window.finsightTrends = {{ snapshot.positions | tojson }};
+</script>
+{% endblock %}

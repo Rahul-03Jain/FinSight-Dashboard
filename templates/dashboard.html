@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block page_title %}Portfolio Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="card metric-card">
+            <div class="card-body">
+                <p class="text-secondary mb-1">Total Value</p>
+                <h4>${{ "%.2f"|format(snapshot.summary.total_current_value) }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card metric-card">
+            <div class="card-body">
+                <p class="text-secondary mb-1">Total Invested</p>
+                <h4>${{ "%.2f"|format(snapshot.summary.total_invested) }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card metric-card">
+            <div class="card-body">
+                <p class="text-secondary mb-1">Profit / Loss</p>
+                <h4 class="{% if snapshot.summary.total_profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    ${{ "%.2f"|format(snapshot.summary.total_profit_loss) }}
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card metric-card">
+            <div class="card-body">
+                <p class="text-secondary mb-1">Daily Gain / Loss</p>
+                <h4 class="{% if snapshot.summary.daily_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    ${{ "%.2f"|format(snapshot.summary.daily_gain_loss) }}
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header">Portfolio Growth</div>
+            <div class="card-body">
+                <canvas id="growthChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100 border-{{ snapshot.risk.risk_color }}">
+            <div class="card-header">Smart Risk Score</div>
+            <div class="card-body">
+                <h2 class="mb-1 text-{{ snapshot.risk.risk_color }}">{{ snapshot.risk.risk_score }}/10</h2>
+                <p class="fw-semibold">{{ snapshot.risk.risk_category }}</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar bg-{{ snapshot.risk.risk_color }}" role="progressbar" style="width: {{ snapshot.risk.risk_score * 10 }}%"></div>
+                </div>
+                <small class="d-block text-secondary">Diversification Score: {{ snapshot.risk.diversification_score }}%</small>
+                <small class="d-block text-secondary">Largest Sector Exposure: {{ snapshot.risk.max_sector_weight }}%</small>
+                <small class="d-block text-secondary">Volatility: {{ snapshot.summary.volatility }}%</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">Sector Allocation</div>
+            <div class="card-body"><canvas id="sectorChart"></canvas></div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">Stock Allocation</div>
+            <div class="card-body"><canvas id="stockAllocationChart"></canvas></div>
+        </div>
+    </div>
+    <div class="col-md-12 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">Profit Contribution</div>
+            <div class="card-body"><canvas id="pnlContributionChart"></canvas></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+window.finsightCharts = {
+    growth: {{ snapshot.charts.growth | tojson }},
+    sector: {{ snapshot.charts.sector_allocation | tojson }},
+    stockAllocation: {{ snapshot.charts.stock_allocation | tojson }},
+    pnlContribution: {{ snapshot.charts.pnl_contribution | tojson }}
+};
+</script>
+{% endblock %}
